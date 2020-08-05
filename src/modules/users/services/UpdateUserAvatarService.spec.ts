@@ -4,13 +4,19 @@ import FakeStorageProvider from '@shared/container/providers/StorageProvider/fak
 
 import AppError from '@shared/errors/AppError';
 
+let fakeUserRepository: FakeUserRepository;
+let fakeStorageProvider: FakeStorageProvider;
+let updateUserAvatar: UpdateUserAvatarService;
+
 describe('UpdateUserAvatar', () => {
+    beforeEach(() => {
+        fakeUserRepository = new FakeUserRepository();
+        fakeStorageProvider = new FakeStorageProvider();
+
+        updateUserAvatar = new UpdateUserAvatarService(fakeUserRepository, fakeStorageProvider);
+    })
+
     it('should be able to create a new user', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeStorageProvider = new FakeStorageProvider();
-
-        const updateUserAvatar = new UpdateUserAvatarService(fakeUserRepository, fakeStorageProvider);
-
         const user = await fakeUserRepository.create({
             name: 'Rolandinho BR',
             email: 'rolandinho@gmail.com',
@@ -26,11 +32,6 @@ describe('UpdateUserAvatar', () => {
     });
 
     it('should not be able to update avatar from non existing user', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeStorageProvider = new FakeStorageProvider();
-
-        const updateUserAvatar = new UpdateUserAvatarService(fakeUserRepository, fakeStorageProvider);
-        
         await expect(updateUserAvatar.execute({
             user_id: 'without-user',
             avatarFilename: 'avatar.jpg',
@@ -39,12 +40,7 @@ describe('UpdateUserAvatar', () => {
     });
 
     it('should delete old avatar when updatubg new one', async () => {
-        const fakeUserRepository = new FakeUserRepository();
-        const fakeStorageProvider = new FakeStorageProvider();
-
         const deleteFile = jest.spyOn(fakeStorageProvider, 'deleteFile');
-
-        const updateUserAvatar = new UpdateUserAvatarService(fakeUserRepository, fakeStorageProvider);
 
         const user = await fakeUserRepository.create({
             name: 'Rolandinho BR',
