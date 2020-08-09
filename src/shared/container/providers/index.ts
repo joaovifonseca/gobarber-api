@@ -1,25 +1,36 @@
 import { container } from 'tsyringe';
 
-import IStorageProvider from './StorageProvider/models/IStorageProvider';
-import DiskStorageProvider from './StorageProvider/implementations/DiskStorageProvider';
+import '@modules/users/providers';
+// import './providers';
 
-import IMailProvider from './MailProvider/models/IMailProvider';
-import EtherealMailProvider from './MailProvider/implementations/EtherealMailProvider';
+import IAppointmentsRepository from '@modules/appointments/repositories/IAppointmentsRepository';
+import AppointmentsRepository from '@modules/appointments/infra/typeorm/repositories/AppointmentsRepository';
 
-import IMailTemplateProvider from './MailTemplateProvider/models/IMailTemplateProvider';
-import HandlebarsMailTemplateProvider from './MailTemplateProvider/implementations/HandlebarsMailTemplateProvider';
+import IUsersRepository from '@modules/users/repositories/IUserRepository';
+import UsersRepository from '@modules/users/infra/typeorm/repositories/UserRepository';
 
-container.registerSingleton<IStorageProvider>(
-    'StorageProvider',
-    DiskStorageProvider,
+import IUserTokensRepository from '@modules/users/repositories/IUserTokensRepository';
+import UserTokensRepository from '@modules/users/infra/typeorm/repositories/UserTokensRepository';
+
+// import INotificationsRepository from '@modules/notifications/repositories/INotificationsRepository';
+// import NotificationsRepository from '@modules/notifications/infra/typeorm/repositories/NotificationsRepository';
+
+container.registerSingleton<IAppointmentsRepository>(
+  'AppointmentsRepository',
+  AppointmentsRepository,
 );
 
-container.registerSingleton<IMailTemplateProvider>(
-    'MailTemplateProvider',
-    HandlebarsMailTemplateProvider,
+container.registerSingleton<IUsersRepository>(
+  'UsersRepository',
+  UsersRepository,
 );
 
-container.registerInstance<IMailProvider>(
-    'MailProvider',
-    container.resolve(EtherealMailProvider),
+container.registerSingleton<IUserTokensRepository>(
+  'UserTokensRepository',
+  UserTokensRepository,
 );
+
+// container.registerSingleton<INotificationsRepository>(
+//   'NotificationsRepository',
+//   NotificationsRepository,
+// );

@@ -11,18 +11,19 @@ interface Request {
 }
 
 type IResponse = Array<{
-    day: number;
-    avaiable: boolean;
+  day: number;
+  avaiable: boolean;
 }>;
 
 @injectable()
 export default class ListProvidersService {
   constructor(
-      @inject('AppointmentRepository')
-      private appointmentRepository: IAppointmentsRepository,
-  ) {}
+    @inject('AppointmentsRepository')
+    private appointmentRepository: IAppointmentsRepository,
+  ) { }
 
   public async execute({ provider_id, year, month }: Request): Promise<IResponse> {
+
     const appointments = await this.appointmentRepository.findAllInMonthFromProvider({
       provider_id,
       year,
@@ -44,9 +45,9 @@ export default class ListProvidersService {
       return {
         day,
         avaiable: appointmentsInDay.length < 10,
-      }
+      };
     });
 
-    return avaiability
+    return avaiability;
   }
 }

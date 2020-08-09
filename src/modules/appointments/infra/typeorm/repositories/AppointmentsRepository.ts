@@ -6,7 +6,7 @@ import Appointment from '../entities/Appointment';
 import IFindAllInMonthFromProviderDTO from '@modules/appointments/dtos/IFindAllInMonthFromProviderDTO';
 import IFindAllInDayFromProviderDTO from '@modules/appointments/dtos/IFindAllInDayFromProviderDTO';
 
-class AppointmentsRepository implements IAppointmentsRepository {
+export default class AppointmentsRepository implements IAppointmentsRepository {
   private ormRepository: Repository<Appointment>;
 
   constructor() {
@@ -28,7 +28,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
       where: {
         provider_id,
         date: Raw(dateFieldName => 
-          `to_char(${dateFieldName}, 'MM-YYYY') = ${parsedMonth}-${year}`),
+          `to_char(${dateFieldName}, 'MM-YYYY') = '${parsedMonth}-${year}'`),
       },
     });
 
@@ -43,7 +43,7 @@ class AppointmentsRepository implements IAppointmentsRepository {
       where: {
         provider_id,
         date: Raw(dateFieldName => 
-          `to_char(${dateFieldName}, 'DD-MM-YYYY') = ${parsedDay}-${parsedMonth}-${year}`),
+          `to_char(${dateFieldName}, 'DD-MM-YYYY') = '${parsedDay}-${parsedMonth}-${year}'`),
       },
     });
 
@@ -62,5 +62,3 @@ class AppointmentsRepository implements IAppointmentsRepository {
     return appointment;
   }
 }
-
-export default AppointmentsRepository;
