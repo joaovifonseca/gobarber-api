@@ -12,11 +12,17 @@ describe('CreateAppointment', () => {
       fakeAppointmentRepository
     );
   });
+
   it('should be able to create a new appointment', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2020, 4, 10, 12).getTime();
+    })
+
     const id = '21321321321';
 
     const appointment = await createAppointment.execute({
-      date: new Date(),
+      user_id: 'user',
+      date: new Date(2020, 4, 10, 13),
       provider_id: id,
     });
 
@@ -29,15 +35,63 @@ describe('CreateAppointment', () => {
     const date = new Date(2020, 7, 10, 11);
 
     await createAppointment.execute({
+      user_id: 'user',
       date,
       provider_id: id,
     });
 
     await expect(
       createAppointment.execute({
+        user_id: 'user',
         date,
         provider_id: id,
       }),
     ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to create an appointment on a past date', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2020, 4, 10, 12).getTime();
+    })
+
+    await expect(
+      createAppointment.execute({
+        user_id: 'user',
+        date: new Date(2020, 4, 10, 11),
+        provider_id: '123123',
+      }),
+    ).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to create a new appointment with same user as provider', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2020, 4, 10, 12).getTime();
+    })
+
+    const id = '21321321321';
+
+    await expect(createAppointment.execute({
+      user_id: 'user',
+      date: new Date(2020, 4, 10, 13),
+      provider_id: 'user',
+    })).rejects.toBeInstanceOf(AppError);
+  });
+
+  it('should not be able to create a new appointment outside the work hours', async () => {
+    jest.spyOn(Date, 'now').mockImplementationOnce(() => {
+      return new Date(2020, 4, 10, 12).getTime();
+    })
+
+    await expect(createAppointment.execute({
+      user_id: 'user',
+      date: new Date(2020, 4, 10, 7),
+      provider_id: 'provider',
+    })).rejects.toBeInstanceOf(AppError);
+
+    await expect(createAppointment.execute({
+      user_id: 'user',
+      date: new Date(2020, 4, 10, 18),
+      provider_id: 'provider',
+    })).rejects.toBeInstanceOf(AppError);
   });
 });
