@@ -1,5 +1,5 @@
-/* eslint-disable camelcase */
 import { Router } from 'express';
+import { celebrate, Segments, Joi } from 'celebrate';
 
 import ensureAuthenticated from '@modules/users/infra/http/middlewares/ensureAuthenticated';
 import ProvidersController from '../controllers/ProvidersController';
@@ -15,8 +15,18 @@ const providerMonthAvaiabilityController = new ProviderMonthAvaiabilityControlle
 providersRouter.use(ensureAuthenticated);
 
 providersRouter.get('/', providersController.index);
-providersRouter.get('/:provider_id/month-availability', providerMonthAvaiabilityController.index);
-providersRouter.get('/:provider_id/day-availability', providerDayAvaiabilityController.index);
+
+providersRouter.get('/:provider_id/month-availability', celebrate({
+    [Segments.PARAMS]: {
+        provider_id: Joi.string().uuid().required(),
+    }
+}), providerMonthAvaiabilityController.index);
+
+providersRouter.get('/:provider_id/day-availability', celebrate({
+    [Segments.PARAMS]: {
+        provider_id: Joi.string().uuid().required(),
+    }
+}), providerDayAvaiabilityController.index);
 
 
 export default providersRouter;
