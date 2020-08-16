@@ -2,14 +2,17 @@ import "reflect-metadata"
 
 import ListProviderAppointmentsSevice from './ListProviderAppointmentsSevice';
 import FakeAppointmentRepository from '../repositories/fakes/FakeAppointmentRepository';
+import FakeCacheProvider from '@shared/container/providers/CacheProvider/fakes/FakeCacheProvider';
 
 let fakeAppointmentRepository: FakeAppointmentRepository;
 let listProviderAppointmentsSevice: ListProviderAppointmentsSevice;
+let fakeCacheProvider: FakeCacheProvider;
 
 describe('ListProviderAppointmentsSevice', () => {
   beforeEach(() => {
     fakeAppointmentRepository = new FakeAppointmentRepository();
-    listProviderAppointmentsSevice = new ListProviderAppointmentsSevice(fakeAppointmentRepository);
+    fakeCacheProvider = new FakeCacheProvider();
+    listProviderAppointmentsSevice = new ListProviderAppointmentsSevice(fakeAppointmentRepository, fakeCacheProvider);
   });
 
   it('should be able to list the appointments on a specific day', async () => {
