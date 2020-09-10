@@ -6,6 +6,7 @@ import IAppointmentsRepository from '../repositories/IAppointmentsRepository';
 import Appointment from '../infra/typeorm/entities/Appointment';
 import ICacheProvider from '@shared/container/providers/CacheProvider/models/ICacheProvider';
 import cache from '@config/cache';
+import { classToClass } from 'class-transformer';
 
 interface Request {
   provider_id: string;
@@ -39,7 +40,7 @@ export default class ListProviderAppointmentsSevice {
 
     await this.cacheProvider.save(
       cacheKey,
-      appointments
+      classToClass(appointments)
     );
 
     return appointments;
